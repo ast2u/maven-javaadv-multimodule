@@ -3,7 +3,8 @@ package com.javaadvanced.app;
 import java.util.Scanner;
 
 public class MainProgram {
-    private static Scanner sc = new Scanner(System.in);
+
+    public final static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
         AppController app = new AppController(args);

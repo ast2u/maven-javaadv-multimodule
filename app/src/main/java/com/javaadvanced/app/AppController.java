@@ -1,22 +1,16 @@
 package com.javaadvanced.app;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.Scanner;
+
 import com.javaadvanced.service.KeyValueManager;
 
-import java.io.IOException;
-import java.io.File;
-import java.util.InputMismatchException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.Arrays;
-import java.util.Collections;
-
-import java.util.Optional;
 public class AppController {
+
     private KeyValueManager service;
-    private static Scanner sc = new Scanner(System.in);
+    private final static Scanner sc = new Scanner(System.in);
     private String filePath;
 
     public AppController(String[] args) {
@@ -35,7 +29,7 @@ public class AppController {
         return path;
     }
 
-    public void printStructure(){
+    public void printStructure() {
         service.print2DStructure();
     }
 
@@ -43,7 +37,7 @@ public class AppController {
         service.saveData();
     }
 
-    public void dataCheck() {
+    public final void dataCheck() {
         while (!filePath.endsWith(".txt")) {
             System.out.println("Invalid file type. Please provide a .txt file.");
             filePath = promptFilePath();
@@ -56,20 +50,23 @@ public class AppController {
                 System.out.print("Do you want to create this file? (yes/no): ");
                 response = sc.nextLine().trim().toLowerCase();
 
-                if (response.equals("yes")) {
-                    service.createFileFromResource();
-                } else if (response.equals("no")) {
-                    System.out.println("Exiting the program.");
-                    System.exit(0);
-                } else {
-                    System.out.println("Must be yes or no.");
+                switch (response) {
+                    case "yes" ->
+                        service.createFileFromResource();
+                    case "no" -> {
+                        System.out.println("Exiting the program.");
+                        System.exit(0);
+                    }
+                    default ->
+                        System.out.println("Must be yes or no.");
+
                 }
             }
         } else {
             try {
                 service.loadData();
                 service.print2DStructure();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 System.out.println("Error loading data: " + e.getMessage());
             }
         }
