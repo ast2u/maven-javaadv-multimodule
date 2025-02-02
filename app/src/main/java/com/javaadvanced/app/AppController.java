@@ -9,7 +9,7 @@ import com.javaadvanced.service.KeyValueManager;
 
 public class AppController {
 
-    private KeyValueManager service;
+    private final KeyValueManager service;
     private final static Scanner sc = new Scanner(System.in);
     private String filePath;
 
