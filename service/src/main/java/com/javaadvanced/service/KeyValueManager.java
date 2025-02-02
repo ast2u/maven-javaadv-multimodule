@@ -4,24 +4,19 @@ import com.javaadvanced.model.Row;
 import com.javaadvanced.model.KeyValuePair;
 import com.javaadvanced.utils.AbstractFileHandler;
 import com.javaadvanced.utils.TxtFileHandler; 
-
-
 import java.io.IOException;
-import java.io.File;
-import java.util.InputMismatchException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.Arrays;
-import java.util.Collections;
+
 
 public class KeyValueManager {
     private List<Row> data;
-    private AbstractFileHandler fileHandler;
-    private String filePath;
+    private final AbstractFileHandler fileHandler;
+    private final String filePath;
 
     public KeyValueManager(String filePath) {
         this.filePath = filePath;
