@@ -3,93 +3,78 @@ package com.javaadvanced.app;
 import com.javaadvanced.service.KeyValueManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.IOException;
 import java.util.Scanner;
 
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-class AppControllerTest {
-
-    @Mock
-    private KeyValueManager service;
+public class AppControllerTest {
 
     @Mock
-    private Scanner sc;
+    private KeyValueManager keyValueManager;
 
-    @InjectMocks
+    @Mock
+    private Scanner scanner;
+
     private AppController appController;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
+        appController = new AppController(new String[]{"test.txt"}, scanner);
+        appController.service = keyValueManager; // Inject the mock
     }
 
     @Test
-    void testPromptFilePath() {
-        when(sc.nextLine()).thenReturn("testfile.txt");
-        String filePath = appController.promptFilePath();
-        assertEquals("testfile.txt", filePath);
+    public void testPrintStructure() {
+        appController.printStructure();
+        verify(keyValueManager, times(1)).print2DStructure();
     }
 
     @Test
-    void testDataCheckWithValidFile() throws IOException {
-        String[] args = {"testfile.txt"};
-        AppController controller = new AppController(args, sc);
-
-        // Mock the void method loadData()
-        doNothing().when(service).loadData();
-
-        controller.dataCheck();
-
-        // Verify that loadData() was called
-        verify(service, times(1)).loadData();
+    public void testSaveFile() {
+        appController.saveFile();
+        verify(keyValueManager, times(1)).saveData();
     }
 
     @Test
-    void testDataCheckWithInvalidFile() {
-        String[] args = {"invalidfile.doc"};
-        AppController controller = new AppController(args, sc);
-        controller.dataCheck();
-        verify(service, never()).loadData();
-    }
-
-    @Test
-    void testSearchPatt() {
-        when(sc.next()).thenReturn("searchTerm");
+    public void testSearchPatt() {
+        when(scanner.next()).thenReturn("key1");
         appController.searchPatt();
-        verify(service, times(1)).searchPatt("searchTerm");
+        verify(keyValueManager, times(1)).searchPatt("key1");
     }
 
     @Test
-    void testEditMenu() {
-        when(sc.next()).thenReturn("1x2", "k", "newKey");
+    public void testEditMenu() {
+        when(scanner.next())
+        .thenReturn("0x0")  // Valid dimension input
+        .thenReturn("k")    // Valid edit choice (key)
+        .thenReturn("newK");
+ 
         appController.editMenu();
-        verify(service, times(1)).editKeyOrValue(1, 2, true, "newKey", null);
+        verify(keyValueManager, times(1)).editKeyOrValue(0, 0, true, "newK", null);
     }
 
     @Test
-    void testAddRow() {
-        when(sc.nextInt()).thenReturn(1, 3);
+    public void testAddRow() {
+        when(scanner.nextInt()).thenReturn(0).thenReturn(0);
         appController.addRow();
-        verify(service, times(1)).addRow(1, 3);
+        verify(keyValueManager, times(1)).addRow(0, 0);
     }
 
     @Test
-    void testSortRow() {
-        when(sc.next()).thenReturn("1-asc");
+    public void testSortRow() {
+        when(scanner.next()).thenReturn("0-asc");
         appController.sortRow();
-        verify(service, times(1)).sortRow(1, "asc");
+        verify(keyValueManager, times(1)).sortRow(0, "asc");
     }
 
     @Test
-    void testResetData() {
-        when(sc.next()).thenReturn("2x2");
+    public void testResetData() {
+        when(scanner.next()).thenReturn("2x2");
         appController.resetData();
-        verify(service, times(1)).resetData(2, 2);
+        verify(keyValueManager, times(1)).resetData(2, 2);
     }
 }

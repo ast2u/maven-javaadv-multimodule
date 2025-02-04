@@ -9,9 +9,9 @@ import com.javaadvanced.service.KeyValueManager;
 
 public class AppController {
 
-    private final KeyValueManager service;
+    public KeyValueManager service;
     private final Scanner sc;
-    protected String filePath;
+    private String filePath;
 
     public AppController(String[] args, Scanner scanner) {
         this.sc = scanner;
