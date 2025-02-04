@@ -41,19 +41,22 @@ public class AppControllerTest {
 
     @Test
     public void testSearchPatt() {
-        when(scanner.next()).thenReturn("key1");
+        when(scanner.nextLine()).thenReturn("key1");
         appController.searchPatt();
         verify(keyValueManager, times(1)).searchPatt("key1");
     }
 
     @Test
     public void testEditMenu() {
-        when(scanner.next())
-        .thenReturn("0x0")  // Valid dimension input
-        .thenReturn("k")    // Valid edit choice (key)
-        .thenReturn("newK");
- 
+        
+        when(scanner.nextLine())
+            .thenReturn("0x0") 
+            .thenReturn("k")   
+            .thenReturn("newK"); 
+
         appController.editMenu();
+
+        // Verify that the editKeyOrValue method is called with the correct parameters
         verify(keyValueManager, times(1)).editKeyOrValue(0, 0, true, "newK", null);
     }
 
@@ -66,14 +69,14 @@ public class AppControllerTest {
 
     @Test
     public void testSortRow() {
-        when(scanner.next()).thenReturn("0-asc");
+        when(scanner.nextLine()).thenReturn("0-asc");
         appController.sortRow();
         verify(keyValueManager, times(1)).sortRow(0, "asc");
     }
 
     @Test
     public void testResetData() {
-        when(scanner.next()).thenReturn("2x2");
+        when(scanner.nextLine()).thenReturn("2x2");
         appController.resetData();
         verify(keyValueManager, times(1)).resetData(2, 2);
     }

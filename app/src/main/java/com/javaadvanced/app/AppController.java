@@ -75,7 +75,7 @@ public class AppController {
 
     public void searchPatt() {
         System.out.print("Search: ");
-        String target = sc.next();
+        String target = sc.nextLine();
         service.searchPatt(target);
     }
 
@@ -86,7 +86,7 @@ public class AppController {
         boolean exitEdit = false;
         while (!exitEdit) {
             System.out.print("Enter Dimension: ");
-            String input = sc.next().trim();
+            String input = sc.nextLine().trim();
             Optional<String[]> optionalDimension = Optional.ofNullable(input.split("x"));
             try {
                 String[] inputDimension = optionalDimension
@@ -118,7 +118,7 @@ public class AppController {
 
         while (!inputChoice.equals("k") && !inputChoice.equals("v") && !inputChoice.equals("b")) {
             System.out.print("Choose to edit Key (k), Value (v), or Both (b): ");
-            inputChoice = sc.next().trim().toLowerCase();
+            inputChoice = sc.nextLine().trim().toLowerCase();
 
             if (!inputChoice.equals("k") && !inputChoice.equals("v") && !inputChoice.equals("b")) {
                 System.out.println("Invalid input! Please enter 'k' for Key, 'v' for Value, or 'b' for Both.");
@@ -129,7 +129,7 @@ public class AppController {
             boolean kvBoth = false;
             while (!kvBoth) {
                 System.out.print("Enter the new key and value (format: key:value): ");
-                String[] newValueForBoth = sc.next().split(":");
+                String[] newValueForBoth = sc.nextLine().split(":");
                 if (newValueForBoth.length == 2) {
                     service.editKeyOrValue(rowIndex, colIndex, false, null, newValueForBoth);
                     kvBoth = true;
@@ -140,7 +140,7 @@ public class AppController {
         } else {
             boolean isKey = inputChoice.equalsIgnoreCase("k");
             System.out.print("Enter the new value: ");
-            String newValue = sc.next();
+            String newValue = sc.nextLine();
             service.editKeyOrValue(rowIndex, colIndex, isKey, newValue, null);
         }
     }
@@ -174,7 +174,7 @@ public class AppController {
         boolean sorting = false;
         while (!sorting) {
             System.out.print("Enter sorting preference (e.g., 0-asc or 1-desc): ");
-            String input = sc.next().toLowerCase();
+            String input = sc.nextLine().toLowerCase();
 
             String[] parts = input.split("-");
             if (parts.length != 2) {
@@ -212,7 +212,7 @@ public class AppController {
         boolean reset = false;
         while (!reset) {
             System.out.print("Enter Dimension: ");
-            String input = sc.next();
+            String input = sc.nextLine();
             String[] dimensions = input.split("x");
             if (dimensions.length == 2) {
                 try {

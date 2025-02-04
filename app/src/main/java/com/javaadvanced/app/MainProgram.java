@@ -12,7 +12,7 @@ public class MainProgram {
         while (!exit) {
             printMenu();
             System.out.print("Action: ");
-            String action = sc.next();
+            String action = sc.nextLine();
 
             switch (action.toLowerCase()) {
                 case "search" -> app.searchPatt();
