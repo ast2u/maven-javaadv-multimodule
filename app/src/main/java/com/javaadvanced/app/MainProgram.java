@@ -7,7 +7,7 @@ public class MainProgram {
     public final static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        AppController app = new AppController(args);
+        AppController app = new AppController(args,sc);
         boolean exit = false;
         while (!exit) {
             printMenu();

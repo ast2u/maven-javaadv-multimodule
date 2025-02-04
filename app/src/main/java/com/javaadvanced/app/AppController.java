@@ -10,16 +10,17 @@ import com.javaadvanced.service.KeyValueManager;
 public class AppController {
 
     private final KeyValueManager service;
-    private final static Scanner sc = new Scanner(System.in);
-    private String filePath;
+    private final Scanner sc;
+    protected String filePath;
 
-    public AppController(String[] args) {
-        filePath = args.length > 0 ? args[0] : promptFilePath();
-        service = new KeyValueManager(filePath);
+    public AppController(String[] args, Scanner scanner) {
+        this.sc = scanner;
+        this.filePath = args.length > 0 ? args[0] : promptFilePath();
+        this.service = new KeyValueManager(filePath);
         dataCheck();
     }
 
-    private String promptFilePath() {
+    public String promptFilePath() {
         System.out.print("Please enter the path to the input file: ");
         String path = sc.nextLine();
         if (!path.endsWith(".txt")) {
