@@ -82,7 +82,8 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.2.5</version>
                     <configuration>
-                        <skipTests>false</skipTests> <!-- Default is to run tests -->
+                        <argLine>-XX:+EnableDynamicAgentLoading</argLine> <!--Suppressing Warnings for Test .net ByteBuddy-->
+                        <skipTests>false</skipTests>
                     </configuration>
                 </plugin>
                 
