@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 public class KeyValueManager {
     private List<Row> data;
-    private final AbstractFileHandler fileHandler;
+    public AbstractFileHandler fileHandler;
     private final String filePath;
 
     public KeyValueManager(String filePath) {
