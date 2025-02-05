@@ -5,18 +5,20 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Scanner;
 
-import com.javaadvanced.service.KeyValueManager;
+import com.javaadvanced.model.SearchResult;
+import com.javaadvanced.service.IKeyValueService;
+import com.javaadvanced.service.KeyValueServiceImpl;
 
 public class AppController {
 
-    public KeyValueManager service;
+    private IKeyValueService service;
     private final Scanner sc;
     private String filePath;
 
     public AppController(String[] args, Scanner scanner) {
         this.sc = scanner;
         this.filePath = args.length > 0 ? args[0] : promptFilePath();
-        this.service = new KeyValueManager(filePath);
+        this.service = new KeyValueServiceImpl(filePath);
         dataCheck();
     }
 
@@ -76,8 +78,19 @@ public class AppController {
     public void searchPatt() {
         System.out.print("Search: ");
         String target = sc.nextLine();
-        service.searchPatt(target);
+
+        // Call the search method and store the result
+        SearchResult result = service.searchPatt(target);
+
+        // Print the search results
+        if (result.getCount() > 0) {
+            System.out.println("Search Result: " + result.getPositions());
+            System.out.println("Total Matches: " + result.getCount());
+        } else {
+            System.out.println("No matches found.");
+        }
     }
+
 
     public void editMenu() {
         String inputChoice = "";
