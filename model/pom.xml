@@ -16,7 +16,11 @@
     <name>model</name>
 
     <dependencies>
-        <!-- No dependencies needed for model, as it is pure data structure -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
     <plugins>
