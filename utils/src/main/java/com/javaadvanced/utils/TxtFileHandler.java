@@ -45,10 +45,6 @@ public class TxtFileHandler extends AbstractFileHandler {
         Arrays.stream(line.trim().split(PAIR_DELIMITER))
                 .map(pair -> pair.replaceAll("^\\[|\\]$", ""))
                 .forEach(pair -> {
-                    if (!pair.contains(DELIMITER)) {
-                        int midPoint = pair.length() / 2;
-                        pair = pair.substring(0, midPoint) + DELIMITER + pair.substring(midPoint);
-                    }
                     String[] keyValue = pair.split(DELIMITER, 2);
                     String value = keyValue.length > 1 ? keyValue[1] : "";
                     row.addCell(new KeyValuePair(keyValue[0], value));

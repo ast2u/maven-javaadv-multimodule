@@ -14,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
@@ -96,5 +99,33 @@ class TxtFileHandlerTest {
             assertEquals(expectedOutput, captor.getValue());
         }
     }
+
+    @Test
+    void testSaveToFileIOException() {
+        Row row = new Row();
+        row.addCell(new KeyValuePair("key1", "value1"));
+        List<Row> rows = List.of(row);
+
+        try (var mockedFileUtils = mockStatic(FileUtils.class)) {
+            // Simulate IOException when writing to file
+            mockedFileUtils.when(() -> FileUtils.writeStringToFile(any(File.class), anyString(), eq(StandardCharsets.UTF_8)))
+                           .thenThrow(new IOException("Mocked IO Error"));
+
+            // Capture System.out output
+            ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+            System.setOut(new PrintStream(outContent));
+
+            // Invoke saveToFile()
+            txtFileHandler.saveToFile(FILE_PATH, rows);
+
+            // Verify error message is printed
+            String expectedMessage = "Error saving to file: Mocked IO Error";
+            assertTrue(outContent.toString().contains(expectedMessage));
+
+            // Reset System.out to avoid affecting other tests
+            System.setOut(System.out);
+        }
+    }
+
 
 }
