@@ -38,26 +38,23 @@ public class KeyValueServiceImpl implements IKeyValueService {
         return data;
     }
 
-
+    @Override
     public void createFileFromResource() {
         System.out.println("Loading default resource data...");
-        try (InputStream resourceStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("default_data.txt")) {
+        try (InputStream resourceStream = getClass().getClassLoader().getResourceAsStream("default_data.txt")) {
             if (resourceStream == null) {
-                throw new IOException("Default resource file not found in the classpath.");
+                throw new IOException("Default resource file not found in the module's resources.");
             }
-
-            // Use the resourceStream, for example, to parse the file
             data = fileHandler.parseStream(resourceStream);
             fileHandler.saveToFile(filePath, data);
             System.out.println("File created successfully at " + filePath + " using default data.");
             print2DStructure();
         } catch (IOException e) {
-            System.out.println("Error loading default resource data: " + e.getMessage());
-            System.exit(0);
+            throw new RuntimeException("Error loading default resource data: " + e.getMessage());
         }
-
     }
 
+    @Override
     public SearchResult searchPatt(String target) {
         List<String> searchResults = new ArrayList<>();
         int matchCount = 0;
@@ -79,6 +76,7 @@ public class KeyValueServiceImpl implements IKeyValueService {
         return new SearchResult(matchCount, searchResults);
     }
 
+    @Override
     public void editKeyOrValue(int rowIndex, int colIndex, boolean isKey, String newValue, String[] newValueForBoth) {
         Row row = data.get(rowIndex);
         KeyValuePair pair = row.getCells().get(colIndex);
@@ -97,6 +95,7 @@ public class KeyValueServiceImpl implements IKeyValueService {
         saveData();
     }
 
+    @Override
     public void addRow(int rowIndex, int numCells) {
         Row newRow = new Row();
         for (int i = 0; i < numCells; i++) {
@@ -106,12 +105,14 @@ public class KeyValueServiceImpl implements IKeyValueService {
         saveData();
     }
 
+    @Override
     public void sortRow(int rowIndex, String sortOrder) {
         Row rowToSort = data.get(rowIndex);
         rowToSort.sortIndexRow(sortOrder);
         saveData();
     }
 
+    @Override
     public void resetData(int rows, int cols) {
         data.clear();
         for (int i = 0; i < rows; i++) {
@@ -124,6 +125,7 @@ public class KeyValueServiceImpl implements IKeyValueService {
         saveData();
     }
 
+    @Override
     public void print2DStructure() {
         data.forEach(row -> {
             row.getCells().forEach(cell -> System.out.print(cell + " "));
@@ -137,10 +139,10 @@ public class KeyValueServiceImpl implements IKeyValueService {
             .collect(Collectors.joining());
     }
     public int countOccurrences(String text, String target) {
-        int count = (int) IntStream.range(0, text.length() - target.length() + 1 )
-        .filter(i -> text.substring(i, i + target.length()).equals(target))
-        .count();
-
-        return count;
+        if (text == null || target == null || target.isEmpty()) {
+            return 0;
+        }
+        return text.split(target, -1).length - 1;
     }
+
 }
