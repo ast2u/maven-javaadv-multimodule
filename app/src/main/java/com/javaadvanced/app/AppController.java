@@ -22,7 +22,7 @@ public class AppController {
         dataCheck();
     }
 
-    public String promptFilePath() {
+    private String promptFilePath() {
         System.out.print("Please enter the path to the input file: ");
         String path = sc.nextLine();
         if (!path.endsWith(".txt")) {
@@ -90,7 +90,6 @@ public class AppController {
             System.out.println("No matches found.");
         }
     }
-
 
     public void editMenu() {
         String inputChoice = "";

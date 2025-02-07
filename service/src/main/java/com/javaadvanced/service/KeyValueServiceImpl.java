@@ -1,20 +1,20 @@
 package com.javaadvanced.service;
 
-import com.javaadvanced.model.Row;
-import com.javaadvanced.model.KeyValuePair;
-import com.javaadvanced.model.SearchResult;
-import com.javaadvanced.utils.AbstractFileHandler;
-import com.javaadvanced.utils.TxtFileHandler; 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+import com.javaadvanced.model.KeyValuePair;
+import com.javaadvanced.model.Row;
+import com.javaadvanced.model.SearchResult;
+import com.javaadvanced.utils.AbstractFileHandler;
+import com.javaadvanced.utils.TxtFileHandler;
 
 public class KeyValueServiceImpl implements IKeyValueService {
+
     private List<Row> data;
     public AbstractFileHandler fileHandler;
     private String filePath;
@@ -23,17 +23,20 @@ public class KeyValueServiceImpl implements IKeyValueService {
         this.filePath = filePath;
         fileHandler = new TxtFileHandler(filePath);
         data = new ArrayList<>();
-        
+
     }
 
+    @Override
     public void loadData() throws IOException {
         data = fileHandler.parseFile();
     }
 
+    @Override
     public void saveData() {
         fileHandler.saveToFile(filePath, data);
     }
 
+    @Override
     public List<Row> getData() {
         return data;
     }
@@ -135,9 +138,10 @@ public class KeyValueServiceImpl implements IKeyValueService {
 
     private String generateAscii() {
         return new Random().ints(3, 32, 127)
-            .mapToObj(c -> String.valueOf((char) c))
-            .collect(Collectors.joining());
+                .mapToObj(c -> String.valueOf((char) c))
+                .collect(Collectors.joining());
     }
+
     public int countOccurrences(String text, String target) {
         if (text == null || target == null || target.isEmpty()) {
             return 0;
