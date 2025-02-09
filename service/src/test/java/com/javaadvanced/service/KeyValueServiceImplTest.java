@@ -13,19 +13,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.Mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.javaadvanced.model.KeyValuePair;
 import com.javaadvanced.model.Row;
 import com.javaadvanced.model.SearchResult;
 import com.javaadvanced.utils.TxtFileHandler;
 
+@ExtendWith(MockitoExtension.class)
 public class KeyValueServiceImplTest {
 
     @Mock
@@ -35,7 +39,7 @@ public class KeyValueServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        //MockitoAnnotations.openMocks(this);
         kvServiceImpl = new KeyValueServiceImpl("test.txt");
         kvServiceImpl.fileHandler = fileHandler;
 
@@ -106,7 +110,6 @@ public class KeyValueServiceImplTest {
                 () -> assertEquals(4, result.getPositions().size()),
                 () -> assertArrayEquals(new String[]{"0x0", "0x1", "1x0", "1x1"}, result.getPositions().toArray())
         );
-
     }
 
     @Test
@@ -186,33 +189,40 @@ public class KeyValueServiceImplTest {
         assertEquals(0, kvServiceImpl.getData().get(0).getCells().size());
     }
 
-    @Test
-    public void testSortRow() {
+    @ParameterizedTest
+    @CsvSource({
+        "0, 'asc'",  // First row, ascending
+        "1, 'desc'"  // Second row, descending
+    })
+    public void testSortRow(int rowIndex, String order) {
         List<Row> data = List.of(
                 new Row(List.of(new KeyValuePair("bAb", "bbb"), new KeyValuePair("aBa", "bbb"), new KeyValuePair("aab", "bbb"))),
                 new Row(List.of(new KeyValuePair("Q#O", "Ch>"), new KeyValuePair("W!2", "{IA"), new KeyValuePair("]j9", "OM+")))
         );
         kvServiceImpl.getData().addAll(data);
+
         System.out.println("Before 2D Table Structure");
         kvServiceImpl.print2DStructure();
         System.out.println();
 
-        kvServiceImpl.sortRow(0, "asc");
+        kvServiceImpl.sortRow(rowIndex, order);
 
-        assertArrayEquals(new String[]{"aab", "aBa", "bAb"},
+        if(order.equals("asc")){
+            assertArrayEquals(new String[]{"aab", "aBa", "bAb"},
                 kvServiceImpl.getData().get(0).getCells()
                         .stream()
                         .map(KeyValuePair::getKey)
                         .toArray());
-
-        kvServiceImpl.sortRow(1, "desc");
-        assertArrayEquals(new String[]{"W!2", "Q#O", "]j9"}, kvServiceImpl.getData().get(1).getCells()
+        }else{
+            assertArrayEquals(new String[]{"W!2", "Q#O", "]j9"}, kvServiceImpl.getData().get(1).getCells()
                 .stream()
                 .map(KeyValuePair::getKey)
                 .toArray());
+        }
 
         System.out.println("After 2D Table Structure");
         kvServiceImpl.print2DStructure();
+        System.out.println();
     }
 
     @Test
