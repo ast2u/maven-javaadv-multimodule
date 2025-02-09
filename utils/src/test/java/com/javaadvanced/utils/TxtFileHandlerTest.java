@@ -48,82 +48,90 @@ class TxtFileHandlerTest {
             mockedFileUtils.when(() -> FileUtils.readLines(any(File.class), eq(StandardCharsets.UTF_8)))
                     .thenReturn(mockLines);
 
-            // Invoke parseFile()
             List<Row> rows = txtFileHandler.parseFile();
 
-            // Assertions
+            rows.forEach(row -> {
+                row.getCells().forEach(cell -> System.out.print(cell + " "));
+                System.out.println();
+            });
             assertEquals(1, rows.size());
             assertEquals(2, rows.get(0).getCells().size());
             assertEquals("key1", rows.get(0).getCells().get(0).getKey());
             assertEquals("value1", rows.get(0).getCells().get(0).getValue());
+            
         }
     }
 
 
     @Test
     void testParseStream() throws Exception {
-        // Mock IOUtils.readLines
+        
         InputStream mockStream = mock(InputStream.class);
         List<String> mockLines = Arrays.asList("[key1\u001Fvalue1]\u001E[key2\u001Fvalue2]");
         mockStatic(IOUtils.class);
         when(IOUtils.readLines(eq(mockStream), eq(StandardCharsets.UTF_8))).thenReturn(mockLines);
 
-        // Invoke parseStream()
         List<Row> rows = txtFileHandler.parseStream(mockStream);
 
-        // Assertions
+        rows.forEach(row -> {
+            row.getCells().forEach(cell -> System.out.print(cell + " "));
+            System.out.println();
+        });
         assertEquals(1, rows.size());
         assertEquals(2, rows.get(0).getCells().size());
         assertEquals("key1", rows.get(0).getCells().get(0).getKey());
         assertEquals("value1", rows.get(0).getCells().get(0).getValue());
+        
     }
 
     @Test
     void testSaveToFile() throws Exception {
-        // Prepare test data
+        
         Row row = new Row();
         row.addCell(new KeyValuePair("key1", "value1"));
         row.addCell(new KeyValuePair("key2", "value2"));
         List<Row> rows = List.of(row);
 
         try (var mockedFileUtils = mockStatic(FileUtils.class)) {
-            // Invoke saveToFile()
+            
             txtFileHandler.saveToFile(FILE_PATH, rows);
 
             // Capture the written data
             ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
             mockedFileUtils.verify(() -> FileUtils.writeStringToFile(any(File.class), captor.capture(), eq(StandardCharsets.UTF_8)));
 
-            // Assertions
             String expectedOutput = "[key1\u001Fvalue1]\u001E[key2\u001Fvalue2]";
+            System.out.println("Test Expected: "+ expectedOutput);
+            System.out.println("Test Output: "+ captor.getValue());
             assertEquals(expectedOutput, captor.getValue());
+            
         }
     }
-
+    
     @Test
     void testSaveToFileIOException() {
         Row row = new Row();
         row.addCell(new KeyValuePair("key1", "value1"));
         List<Row> rows = List.of(row);
 
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        
         try (var mockedFileUtils = mockStatic(FileUtils.class)) {
-            // Simulate IOException when writing to file
             mockedFileUtils.when(() -> FileUtils.writeStringToFile(any(File.class), anyString(), eq(StandardCharsets.UTF_8)))
                            .thenThrow(new IOException("Mocked IO Error"));
 
-            // Capture System.out output
-            ByteArrayOutputStream outContent = new ByteArrayOutputStream();
             System.setOut(new PrintStream(outContent));
 
-            // Invoke saveToFile()
             txtFileHandler.saveToFile(FILE_PATH, rows);
 
             // Verify error message is printed
             String expectedMessage = "Error saving to file: Mocked IO Error";
             assertTrue(outContent.toString().contains(expectedMessage));
 
-            // Reset System.out to avoid affecting other tests
-            System.setOut(System.out);
+        } finally {
+            //Reset
+            System.setOut(originalOut);
         }
     }
 
